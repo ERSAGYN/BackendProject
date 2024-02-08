@@ -1,0 +1,28 @@
+{
+  "name": "lesson_nodemon",
+  "version": "0.0.1",
+  "description": "package to connect nodemon to our project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nodemonstart": "nodemon app.js"
+  },
+  "author": "Yersagyn Konyrtayev",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.8.1",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.1",
+    "exceljs": "^4.4.0",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.9",
+    "number-to-words": "^1.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "3.2.4"
+  }
+}

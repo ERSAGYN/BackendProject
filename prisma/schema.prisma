@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model groups {
+  id        Int     @id @default(autoincrement())
+  groupname String? @db.VarChar(255)
+}
+
+model hobbies {
+  id   Int     @id @default(autoincrement())
+  name String? @db.VarChar(255)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model student_hobbies {
+  id         Int  @id @default(autoincrement())
+  student_id Int?
+  hobby_id   Int?
+}
+
+model students {
+  id         Int       @id @default(autoincrement())
+  first_name String?   @db.VarChar(255)
+  last_name  String?   @db.VarChar(255)
+  birthday   DateTime? @db.Date
+  gender     Boolean?
+  group_id   Int
+}
+
+model books {
+  id         Int       @id @default(autoincrement())
+  Name String?   @db.VarChar(255)
+  Author  String?   @db.VarChar(1024)
+  Genres   String? @db.VarChar(255)
+  PagesCount     Int
+  Price   Int
+  PublishYear   Int
+}

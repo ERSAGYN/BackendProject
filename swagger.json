@@ -147,7 +147,67 @@
     "/api/authors": {
       "get": {
         "tags": ["book"],
-        "summary": "Get all Books in system",
+        "summary": "Get authors of books",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        }
+      }
+    },
+    "/api/genres": {
+      "get": {
+        "tags": ["book"],
+        "summary": "Get genres of books",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        }
+      }
+    },
+    "/api/author/{name}/books": {
+      "get": {
+        "tags": ["book"],
+        "summary": "Get books by authors",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "book to find by authors name",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        }
+      }
+    },
+    "/api/genre/{genre}/books": {
+      "get": {
+        "tags": ["book"],
+        "summary": "Get books by genres",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "book to find by genres",
+            "type": "string",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",

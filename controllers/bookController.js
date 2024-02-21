@@ -1,7 +1,7 @@
 const ExcelJS = require("exceljs");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const nodemailer = require("nodemailer");
+//const nodemailer = require("nodemailer");
 const logger = require("../utils/logger");
 //
 // const accessToken =
@@ -19,7 +19,11 @@ const logger = require("../utils/logger");
 
 async function getAllBooks(req, res) {
   try {
-    logger.info("/books", req.socket.remoteAddress, "Request received");
+    logger.info(
+      "/api/books",
+      req.socket.remoteAddress,
+      "Request receive(Get all books)",
+    );
     const allBooks = await prisma.books.findMany();
     res.status(200).json({
       status: "success",
@@ -41,6 +45,11 @@ async function getAllBooks(req, res) {
 
 async function setNewBook(req, res) {
   try {
+    logger.info(
+      "/api/books",
+      req.socket.remoteAddress,
+      "Request receive(Set new book)",
+    );
     const { Name, Author, Genres, PagesCount, Price, PublishYear } = req.body;
 
     const newBook = await prisma.books.create({
@@ -100,6 +109,11 @@ async function setNewBook(req, res) {
 
 async function uploadBook(req, res) {
   try {
+    logger.info(
+      "/upload-excel",
+      req.socket.remoteAddress,
+      "Request receive(Uploaded books from excel)",
+    );
     const { file } = req;
 
     if (!file) {
@@ -144,6 +158,11 @@ async function uploadBook(req, res) {
 
 async function updateBook(req, res) {
   try {
+    logger.info(
+      "/api/books/:id",
+      req.socket.remoteAddress,
+      "Request receive(Updated book)",
+    );
     const bookId = parseInt(req.params.id, 10);
     const { Name, Author, Genres, PagesCount, Price, PublishYear } = req.body;
 
@@ -178,6 +197,11 @@ async function updateBook(req, res) {
 
 async function deleteBook(req, res) {
   try {
+    logger.info(
+      "/api/books/:id",
+      req.socket.remoteAddress,
+      "Request receive(Deleted book)",
+    );
     const bookId = parseInt(req.params.id, 10);
 
     const existingBook = await prisma.books.findUnique({
@@ -212,6 +236,11 @@ async function deleteBook(req, res) {
 
 async function getBookByName(req, res) {
   try {
+    logger.info(
+      "/api/books/byName/:name",
+      req.socket.remoteAddress,
+      "Request receive(Get book by name)",
+    );
     const bookName = req.params.name;
 
     // Query the database for the book with the specified name
@@ -245,6 +274,11 @@ async function getBookByName(req, res) {
 
 async function getBookByPrice(req, res) {
   try {
+    logger.info(
+      "/api/books/byPrice/:price:",
+      req.socket.remoteAddress,
+      "Request receive(Get book by price)",
+    );
     const bookPrice = parseFloat(req.params.price);
 
     // Query the database for the book with the specified name
@@ -278,6 +312,11 @@ async function getBookByPrice(req, res) {
 
 async function getAuthors(req, res) {
   try {
+    logger.info(
+      "/api/authors",
+      req.socket.remoteAddress,
+      "Request receive(Get authors)",
+    );
     const authors = await prisma.books.findMany({
       distinct: ["Author"],
       select: {
@@ -311,6 +350,11 @@ async function getAuthors(req, res) {
 
 async function getGenres(req, res) {
   try {
+    logger.info(
+      "/api/genres",
+      req.socket.remoteAddress,
+      "Request receive(Get genres)",
+    );
     const books = await prisma.books.findMany();
 
     if (!books || books.length === 0) {
@@ -344,6 +388,11 @@ async function getGenres(req, res) {
 
 async function getBooksByAuthor(req, res) {
   try {
+    logger.info(
+      "/api/authors/:name/books",
+      req.socket.remoteAddress,
+      "Request receive(Get books by one Author)",
+    );
     const authorName = req.params.name;
 
     const booksByAuthor = await prisma.books.findMany({
@@ -378,6 +427,11 @@ async function getBooksByAuthor(req, res) {
 
 async function getBooksByGenre(req, res) {
   try {
+    logger.info(
+      "/api/genres/:genre/books",
+      req.socket.remoteAddress,
+      "Request receive(Get all books by one genre)",
+    );
     // Extract the genre from the parameters
     const genre = req.params.genre;
 

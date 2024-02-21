@@ -65,6 +65,52 @@
         }
       }
       
+    },
+    "/api/books/byName/{name}": {
+      "get": {
+        "tags": ["book"],
+        "summary": "Get books by name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "book to find",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        }
+      }
+    },
+    "/api/books/byPrice/{price}": {
+      "get": {
+        "tags": ["book"],
+        "summary": "Get books by price",
+        "parameters": [
+          {
+            "name": "price",
+            "in": "path",
+            "description": "books to find by price",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {

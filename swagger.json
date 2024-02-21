@@ -1,0 +1,103 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "My book Project CRUD",
+    "description": "My book Project Application API",
+    "license": {
+      "name": "AITU",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:3001",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Books",
+      "description": "API for Books in the system"
+    }
+  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/api/books": {
+      "get": {
+        "tags": ["book"],
+        "summary": "Get all Books in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "book"
+        ],
+        "description": "Create new book in system",
+        "parameters": [
+          {
+            "name": "book",
+            "in": "body",
+            "description": "book that we want to create",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        ],
+        "produces": [
+          "application/json/ejs"
+        ],
+        "responses": {
+          "200": {
+            "description": "New book is created",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          },
+          "409": {
+            "description": "Database error"
+          }
+        }
+      }
+      
+    }
+  },
+  "definitions": {
+    "book": {
+      "required": ["name"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "uniqueItems": true
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Author": {
+          "type": "string"
+        },
+        "Genres": {
+          "type": "string"
+        },
+        "PagesCount": {
+          "type": "integer"
+        },
+        "Price": {
+          "type": "integer"
+        },
+        "PublishYear": {
+          "type": "integer"
+        }
+      }
+    },
+    "Books": {
+      "type": "array",
+      "$ref": "#/definitions/book"
+    }
+  }
+}

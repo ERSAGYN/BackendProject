@@ -2,22 +2,24 @@ const ExcelJS = require("exceljs");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const nodemailer = require("nodemailer");
+const logger = require("../utils/logger");
+//
+// const accessToken =
+//   "vk1.a.PyNnoFrrVj2u-E-L75nZd0kbOm1aBX9YjHV5C5HP7PtJHI0BGtG9lFSh5IwSGUxJ2e2v8rf9UUObFihfO-Jf5wy0uO7p5mjxrXDblnaeyoChmOwvKMgPNNaj-ly3OTUMPmKKKyr8UPb1ZP5SOqqjWgI16zA0LDYwiZmHaLrzM0cuBRIsX3llnykbG8-afB2szalFiF4_8Ib7KslQEB_aUg\n";
+// const userId = "457299835";
+// const randomId = Math.floor(Math.random() * 1000000);
 
-const accessToken =
-  "vk1.a.PyNnoFrrVj2u-E-L75nZd0kbOm1aBX9YjHV5C5HP7PtJHI0BGtG9lFSh5IwSGUxJ2e2v8rf9UUObFihfO-Jf5wy0uO7p5mjxrXDblnaeyoChmOwvKMgPNNaj-ly3OTUMPmKKKyr8UPb1ZP5SOqqjWgI16zA0LDYwiZmHaLrzM0cuBRIsX3llnykbG8-afB2szalFiF4_8Ib7KslQEB_aUg\n";
-const userId = "457299835";
-const randomId = Math.floor(Math.random() * 1000000);
-
-const transporter = nodemailer.createTransport({
-  service: "outlook",
-  auth: {
-    user: "220642@astanait.edu.kz",
-    pass: "kLrk1ZRhMmZhm",
-  },
-});
+// const transporter = nodemailer.createTransport({
+//   service: "outlook",
+//   auth: {
+//     user: "220642@astanait.edu.kz",
+//     pass: "kLrk1ZRhMmZhm",
+//   },
+// });
 
 async function getAllBooks(req, res) {
   try {
+    logger.info("/books", req.socket.remoteAddress, "Request received");
     const allBooks = await prisma.books.findMany();
     res.status(200).json({
       status: "success",
@@ -52,32 +54,32 @@ async function setNewBook(req, res) {
       },
     });
 
-    const mailOptions = {
-      from: "220642@astanait.edu.kz",
-      to: "ersagyn0@gmail.com",
-      subject: "New Book Added",
-      text: "A new book has been added to the library.",
-    };
+    // const mailOptions = {
+    //   from: "220642@astanait.edu.kz",
+    //   to: "ersagyn0@gmail.com",
+    //   subject: "New Book Added",
+    //   text: "A new book has been added to the library.",
+    // };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Email notification error:", error);
-      } else {
-        console.log("Email notification sent:", info.response);
-      }
-    });
+    // transporter.sendMail(mailOptions, (error, info) => {
+    //   if (error) {
+    //     console.error("Email notification error:", error);
+    //   } else {
+    //     console.log("Email notification sent:", info.response);
+    //   }
+    // });
 
-    const message = "A new book has been added to the library.";
-    const vkApiUrl = `https://api.vk.com/method/messages.send?user_id=${userId}&message=${encodeURIComponent(message)}&access_token=${accessToken}&v=5.131&random_id=${randomId}`;
+    // const message = "A new book has been added to the library.";
+    // const vkApiUrl = `https://api.vk.com/method/messages.send?user_id=${userId}&message=${encodeURIComponent(message)}&access_token=${accessToken}&v=5.131&random_id=${randomId}`;
+    //
+    // const vkApiResponse = await fetch(vkApiUrl, { method: "POST" });
+    // const vkApiResult = await vkApiResponse.json();
 
-    const vkApiResponse = await fetch(vkApiUrl, { method: "POST" });
-    const vkApiResult = await vkApiResponse.json();
-
-    if (vkApiResult.error) {
-      console.error("VK notification error:", vkApiResult.error);
-    } else {
-      console.log("VK notification sent:", vkApiResult.response);
-    }
+    // if (vkApiResult.error) {
+    //   console.error("VK notification error:", vkApiResult.error);
+    // } else {
+    //   console.log("VK notification sent:", vkApiResult.response);
+    // }
 
     res.status(201).json({
       status: "success",

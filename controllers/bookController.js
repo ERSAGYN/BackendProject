@@ -19,7 +19,8 @@ const logger = require("../utils/logger");
 
 async function getAllBooks(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/books",
       req.socket.remoteAddress,
       "Request receive(Get all books)",
@@ -33,6 +34,11 @@ async function getAllBooks(req, res) {
       },
     });
   } catch (error) {
+    logger.error(
+      "/api/books",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",
@@ -45,7 +51,8 @@ async function getAllBooks(req, res) {
 
 async function setNewBook(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/books",
       req.socket.remoteAddress,
       "Request receive(Set new book)",
@@ -109,7 +116,8 @@ async function setNewBook(req, res) {
 
 async function uploadBook(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/upload-excel",
       req.socket.remoteAddress,
       "Request receive(Uploaded books from excel)",
@@ -158,7 +166,8 @@ async function uploadBook(req, res) {
 
 async function updateBook(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/books/:id",
       req.socket.remoteAddress,
       "Request receive(Updated book)",
@@ -197,7 +206,8 @@ async function updateBook(req, res) {
 
 async function deleteBook(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/books/:id",
       req.socket.remoteAddress,
       "Request receive(Deleted book)",
@@ -236,7 +246,8 @@ async function deleteBook(req, res) {
 
 async function getBookByName(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/books/byName/:name",
       req.socket.remoteAddress,
       "Request receive(Get book by name)",
@@ -274,7 +285,8 @@ async function getBookByName(req, res) {
 
 async function getBookByPrice(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/books/byPrice/:price:",
       req.socket.remoteAddress,
       "Request receive(Get book by price)",
@@ -312,7 +324,8 @@ async function getBookByPrice(req, res) {
 
 async function getAuthors(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/authors",
       req.socket.remoteAddress,
       "Request receive(Get authors)",
@@ -350,7 +363,8 @@ async function getAuthors(req, res) {
 
 async function getGenres(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/genres",
       req.socket.remoteAddress,
       "Request receive(Get genres)",
@@ -388,7 +402,8 @@ async function getGenres(req, res) {
 
 async function getBooksByAuthor(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/authors/:name/books",
       req.socket.remoteAddress,
       "Request receive(Get books by one Author)",
@@ -427,7 +442,8 @@ async function getBooksByAuthor(req, res) {
 
 async function getBooksByGenre(req, res) {
   try {
-    logger.info(
+    logger.log(
+      "info",
       "/api/genres/:genre/books",
       req.socket.remoteAddress,
       "Request receive(Get all books by one genre)",

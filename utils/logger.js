@@ -7,20 +7,21 @@ const driver = neo4j.driver(
 );
 
 const logger = winston.createLogger({
-  level: "info",
+  levels: winston.config.syslog.levels,
   format: winston.format.json(),
   transports: [
     new winston.transports.Console(),
     new winston.transports.File({ filename: "error.log", level: "error" }),
-    new winston.transports.File({ filename: "combined.log" }),
+    new winston.transports.File({ filename: "warn.log", level: "warn" }),
+    new winston.transports.File({ filename: "info.log", level: "info" }),
   ],
 });
 
-logger.info = async (route, ipAddress, message) => {
+logger.info = async (level, route, ipAddress, message) => {
   const session = driver.session(); // Create a new session for each log entry
   try {
     await session.run(
-      "CREATE (log:Log {route: $route, ipAddress: $ipAddress, message: $message})",
+      "CREATE (log:Log {level: $level, route: $route, ipAddress: $ipAddress, message: $message})",
       {
         route,
         ipAddress,

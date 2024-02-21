@@ -17,7 +17,7 @@ app.use((req, res, next) => {
       req.socket.remoteAddress ||
       (req.connection.socket ? req.connection.socket.remoteAddress : null);
     // Log the request information at the info level
-    logger.info(route, ipAddress, "Request received");
+    logger.log("info", route, ipAddress, "Request received");
 
     // Continue to the next middleware
     next();

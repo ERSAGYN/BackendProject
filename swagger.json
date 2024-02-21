@@ -111,6 +111,52 @@
           }
         }
       }
+    },
+    "/api/books/{id}": {
+      "put": {
+        "tags": ["book"],
+        "summary": "Update book by id",
+        "parameters": [
+          {
+            "name": "book",
+            "in": "body",
+            "description": "book that we want to update",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "book that we want to update",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        }
+      }
+    },
+    "/api/authors": {
+      "get": {
+        "tags": ["book"],
+        "summary": "Get all Books in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {

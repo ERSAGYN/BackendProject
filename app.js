@@ -7,7 +7,8 @@ const swaggerDocument = require("./swagger.json");
 const logger = require("./utils/logger");
 
 const app = express();
-const port = 3001;
+// eslint-disable-next-line no-undef
+const PORT = process.env.PORT || 3001;
 app.use((req, res, next) => {
   try {
     const route = req.originalUrl;
@@ -55,6 +56,6 @@ app.route("/api/genres").get(bookController.getGenres);
 app.route("/api/author/:name/books").get(bookController.getBooksByAuthor);
 app.route("/api/genre/:genre/books").get(bookController.getBooksByGenre);
 
-app.listen(port, "127.0.0.1", () => {
-  console.log(`App listening on ports ssssssss ${port}`);
+app.listen(PORT, () => {
+  console.log(`App listening on ports ssssssss ${PORT}`);
 });

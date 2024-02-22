@@ -201,7 +201,7 @@
         "summary": "Get books by genres",
         "parameters": [
           {
-            "name": "name",
+            "name": "genre",
             "in": "path",
             "description": "book to find by genres",
             "type": "string",

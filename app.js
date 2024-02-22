@@ -16,21 +16,16 @@ app.use((req, res, next) => {
       req.connection.remoteAddress ||
       req.socket.remoteAddress ||
       (req.connection.socket ? req.connection.socket.remoteAddress : null);
-    // Log the request information at the info level
+
     logger.log("info", route, ipAddress, "Request received");
 
-    // Continue to the next middleware
     next();
   } catch (error) {
-    // Handle any potential error during logging
-    // Log the error at a higher level (e.g., warn or error)
     logger.error(
       req.originalUrl,
       req.ip,
       `Error logging request: ${error.message}`,
     );
-
-    // Continue to the next middleware despite the logging error
     next();
   }
 });

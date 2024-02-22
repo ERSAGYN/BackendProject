@@ -104,6 +104,11 @@ async function setNewBook(req, res) {
       },
     });
   } catch (error) {
+    logger.error(
+      "/api/books",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",
@@ -125,6 +130,11 @@ async function uploadBook(req, res) {
     const { file } = req;
 
     if (!file) {
+      logger.error(
+        "/upload-excel",
+        req.socket.remoteAddress,
+        `Error: no file uploaded}`,
+      );
       return res.status(400).json({ error: "No file uploaded" });
     }
 
@@ -159,6 +169,11 @@ async function uploadBook(req, res) {
       message: "Excel file uploaded and data inserted successfully",
     });
   } catch (error) {
+    logger.error(
+      "/upload-excel",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error("Error uploading Excel file:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -194,6 +209,11 @@ async function updateBook(req, res) {
       },
     });
   } catch (error) {
+    logger.error(
+      "/api/books/:id",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",
@@ -219,6 +239,12 @@ async function deleteBook(req, res) {
     });
 
     if (!existingBook) {
+      logger.log(
+        "warn",
+        "/api/books/:id",
+        req.socket.remoteAddress,
+        "Book not found",
+      );
       return res.status(404).json({
         status: "fail",
         message: "Book not found",
@@ -234,6 +260,11 @@ async function deleteBook(req, res) {
       message: "Book deleted successfully",
     });
   } catch (error) {
+    logger.error(
+      "/api/books/:id",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",
@@ -254,12 +285,17 @@ async function getBookByName(req, res) {
     );
     const bookName = req.params.name;
 
-    // Query the database for the book with the specified name
     const book = await prisma.books.findFirst({
       where: { Name: bookName },
     });
 
     if (!book) {
+      logger.log(
+        "warn",
+        "/api/books/byName/:name",
+        req.socket.remoteAddress,
+        "Book not found",
+      );
       return res.status(404).json({
         status: "fail",
         message: "Book not found",
@@ -273,6 +309,11 @@ async function getBookByName(req, res) {
       },
     });
   } catch (error) {
+    logger.error(
+      "/api/books/byName/:name",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",
@@ -287,7 +328,7 @@ async function getBookByPrice(req, res) {
   try {
     logger.log(
       "info",
-      "/api/books/byPrice/:price:",
+      "/api/books/byPrice/:price",
       req.socket.remoteAddress,
       "Request receive(Get book by price)",
     );
@@ -299,6 +340,12 @@ async function getBookByPrice(req, res) {
     });
 
     if (!book) {
+      logger.log(
+        "warn",
+        "/api/books/byPrice/:price",
+        req.socket.remoteAddress,
+        "Book not found",
+      );
       return res.status(404).json({
         status: "fail",
         message: "Book not found",
@@ -312,6 +359,11 @@ async function getBookByPrice(req, res) {
       },
     });
   } catch (error) {
+    logger.error(
+      "/api/books/byPrice/:price",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",
@@ -338,6 +390,12 @@ async function getAuthors(req, res) {
     });
 
     if (!authors || authors.length === 0) {
+      logger.log(
+        "warn",
+        "/api/authors",
+        req.socket.remoteAddress,
+        "Authors not found",
+      );
       return res.status(404).json({
         status: "fail",
         message: "Authors not found",
@@ -351,6 +409,11 @@ async function getAuthors(req, res) {
       },
     });
   } catch (error) {
+    logger.error(
+      "/api/authors",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",
@@ -372,6 +435,12 @@ async function getGenres(req, res) {
     const books = await prisma.books.findMany();
 
     if (!books || books.length === 0) {
+      logger.log(
+        "warn",
+        "/api/genres",
+        req.socket.remoteAddress,
+        "Book not found",
+      );
       return res.status(404).json({
         status: "fail",
         message: "Books not found",
@@ -390,6 +459,11 @@ async function getGenres(req, res) {
       },
     });
   } catch (error) {
+    logger.error(
+      "/api/genres",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",
@@ -417,6 +491,12 @@ async function getBooksByAuthor(req, res) {
     });
 
     if (!booksByAuthor || booksByAuthor.length === 0) {
+      logger.log(
+        "warn",
+        "/api/authors/:name/books",
+        req.socket.remoteAddress,
+        `Books by the author ${authorName} not found`,
+      );
       return res.status(404).json({
         status: "fail",
         message: `Books by the author ${authorName} not found`,
@@ -430,6 +510,11 @@ async function getBooksByAuthor(req, res) {
       },
     });
   } catch (error) {
+    logger.error(
+      "/api/authors/:name/books",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",
@@ -461,6 +546,12 @@ async function getBooksByGenre(req, res) {
     });
 
     if (!booksByGenre || booksByGenre.length === 0) {
+      logger.log(
+        "warn",
+        "/api/genres/:genre/books",
+        req.socket.remoteAddress,
+        "Books with genre not found",
+      );
       return res.status(404).json({
         status: "fail",
         message: `Books with the specified genre not found`,
@@ -474,6 +565,11 @@ async function getBooksByGenre(req, res) {
       },
     });
   } catch (error) {
+    logger.error(
+      "/api/genres/:genre/books",
+      req.socket.remoteAddress,
+      `Error: ${error.message}`,
+    );
     console.error(error);
     res.status(500).json({
       status: "error",

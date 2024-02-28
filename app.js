@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const userController = require("./controllers/userController");
 const bookController = require("./controllers/bookController");
 require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
@@ -41,6 +42,9 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+
+app.post("/api/register", userController.register);
+app.post("/api/login", userController.login);
 
 app
   .route("/api/books")

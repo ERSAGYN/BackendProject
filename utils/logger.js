@@ -1,14 +1,21 @@
 const winston = require("winston");
-const neo4j = require("neo4j-driver");
+const mongoose = require("mongoose");
 
-const driver = neo4j.driver(
-  "neo4j+s://f879b711.databases.neo4j.io",
-  neo4j.auth.basic("neo4j", "tHAcdkwu1m5Z63nbHTxz8c_OZZ9CjxBP30EgzjHJGHw"),
-);
+const LogSchema = new mongoose.Schema({
+  route: String,
+  ipAddress: String,
+  message: String,
+  timestamp: { type: Date, default: Date.now },
+});
+
+const Log = mongoose.model("Log", LogSchema);
 
 const logger = winston.createLogger({
-  levels: winston.config.syslog.levels,
-  format: winston.format.json(),
+  level: "info",
+  format: winston.format.combine(
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    winston.format.json(),
+  ),
   transports: [
     new winston.transports.Console(),
     new winston.transports.File({ filename: "error.log", level: "error" }),
@@ -17,20 +24,14 @@ const logger = winston.createLogger({
   ],
 });
 
-logger.info = async (level, route, ipAddress, message) => {
-  const session = driver.session(); // Create a new session for each log entry
-  try {
-    await session.run(
-      "CREATE (log:Log {level: $level, route: $route, ipAddress: $ipAddress, message: $message})",
-      {
-        route,
-        ipAddress,
-        message,
-      },
-    );
-  } finally {
-    await session.close(); // Close the session after the log entry is created
-  }
+logger.info = async (route, ipAddress, message) => {
+  const logEntry = new Log({ route, ipAddress, message });
+  await logEntry.save();
+};
+
+logger.error = async (route, ipAddress, message) => {
+  const logEntry = new Log({ route, ipAddress, message });
+  await logEntry.save();
 };
 
 module.exports = logger;

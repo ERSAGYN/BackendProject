@@ -1,31 +1,17 @@
 const ExcelJS = require("exceljs");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-//const nodemailer = require("nodemailer");
-const logger = require("../utils/logger");
-//
-// const accessToken =
-//   "vk1.a.PyNnoFrrVj2u-E-L75nZd0kbOm1aBX9YjHV5C5HP7PtJHI0BGtG9lFSh5IwSGUxJ2e2v8rf9UUObFihfO-Jf5wy0uO7p5mjxrXDblnaeyoChmOwvKMgPNNaj-ly3OTUMPmKKKyr8UPb1ZP5SOqqjWgI16zA0LDYwiZmHaLrzM0cuBRIsX3llnykbG8-afB2szalFiF4_8Ib7KslQEB_aUg\n";
-// const userId = "457299835";
-// const randomId = Math.floor(Math.random() * 1000000);
 
-// const transporter = nodemailer.createTransport({
-//   service: "outlook",
-//   auth: {
-//     user: "220642@astanait.edu.kz",
-//     pass: "kLrk1ZRhMmZhm",
-//   },
-// });
+const Book = require("../models/book");
+
+const logger = require("../utils/logger");
 
 async function getAllBooks(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/books",
       req.socket.remoteAddress,
       "Request receive(Get all books)",
     );
-    const allBooks = await prisma.books.findMany();
+    const allBooks = await Book.find();
     res.status(200).json({
       status: "success",
       results: allBooks.length,
@@ -34,68 +20,31 @@ async function getAllBooks(req, res) {
       },
     });
   } catch (error) {
-    logger.error(
-      "/api/books",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function setNewBook(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/books",
       req.socket.remoteAddress,
       "Request receive(Set new book)",
     );
     const { Name, Author, Genres, PagesCount, Price, PublishYear } = req.body;
 
-    const newBook = await prisma.books.create({
-      data: {
-        Name,
-        Author,
-        Genres,
-        PagesCount,
-        Price,
-        PublishYear,
-      },
+    const newBook = await Book.create({
+      Name,
+      Author,
+      Genres,
+      PagesCount,
+      Price,
+      PublishYear,
     });
-
-    // const mailOptions = {
-    //   from: "220642@astanait.edu.kz",
-    //   to: "ersagyn0@gmail.com",
-    //   subject: "New Book Added",
-    //   text: "A new book has been added to the library.",
-    // };
-
-    // transporter.sendMail(mailOptions, (error, info) => {
-    //   if (error) {
-    //     console.error("Email notification error:", error);
-    //   } else {
-    //     console.log("Email notification sent:", info.response);
-    //   }
-    // });
-
-    // const message = "A new book has been added to the library.";
-    // const vkApiUrl = `https://api.vk.com/method/messages.send?user_id=${userId}&message=${encodeURIComponent(message)}&access_token=${accessToken}&v=5.131&random_id=${randomId}`;
-    //
-    // const vkApiResponse = await fetch(vkApiUrl, { method: "POST" });
-    // const vkApiResult = await vkApiResponse.json();
-
-    // if (vkApiResult.error) {
-    //   console.error("VK notification error:", vkApiResult.error);
-    // } else {
-    //   console.log("VK notification sent:", vkApiResult.response);
-    // }
 
     res.status(201).json({
       status: "success",
@@ -104,25 +53,17 @@ async function setNewBook(req, res) {
       },
     });
   } catch (error) {
-    logger.error(
-      "/api/books",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function uploadBook(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/upload-excel",
       req.socket.remoteAddress,
       "Request receive(Uploaded books from excel)",
@@ -130,11 +71,6 @@ async function uploadBook(req, res) {
     const { file } = req;
 
     if (!file) {
-      logger.error(
-        "/upload-excel",
-        req.socket.remoteAddress,
-        `Error: no file uploaded}`,
-      );
       return res.status(400).json({ error: "No file uploaded" });
     }
 
@@ -162,18 +98,12 @@ async function uploadBook(req, res) {
         else data[headers[j]] = row[j];
       }
 
-      await prisma.books.create({ data });
+      await Book.create(data);
     }
-
     res.json({
       message: "Excel file uploaded and data inserted successfully",
     });
   } catch (error) {
-    logger.error(
-      "/upload-excel",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error("Error uploading Excel file:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -181,18 +111,18 @@ async function uploadBook(req, res) {
 
 async function updateBook(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/books/:id",
       req.socket.remoteAddress,
       "Request receive(Updated book)",
     );
+
     const bookId = parseInt(req.params.id, 10);
     const { Name, Author, Genres, PagesCount, Price, PublishYear } = req.body;
 
-    const updatedBook = await prisma.books.update({
-      where: { id: bookId },
-      data: {
+    const updatedBook = await Book.findByIdAndUpdate(
+      bookId,
+      {
         Name,
         Author,
         Genres,
@@ -200,7 +130,8 @@ async function updateBook(req, res) {
         Price,
         PublishYear,
       },
-    });
+      { new: true },
+    );
 
     res.status(200).json({
       status: "success",
@@ -209,93 +140,61 @@ async function updateBook(req, res) {
       },
     });
   } catch (error) {
-    logger.error(
-      "/api/books/:id",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function deleteBook(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/books/:id",
       req.socket.remoteAddress,
       "Request receive(Deleted book)",
     );
+
     const bookId = parseInt(req.params.id, 10);
 
-    const existingBook = await prisma.books.findUnique({
-      where: { id: bookId },
-    });
+    const existingBook = await Book.findById(bookId);
 
     if (!existingBook) {
-      logger.log(
-        "warn",
-        "/api/books/:id",
-        req.socket.remoteAddress,
-        "Book not found",
-      );
       return res.status(404).json({
         status: "fail",
         message: "Book not found",
       });
     }
 
-    await prisma.books.delete({
-      where: { id: bookId },
-    });
+    await Book.findByIdAndDelete(bookId);
 
     res.status(200).json({
       status: "success",
       message: "Book deleted successfully",
     });
   } catch (error) {
-    logger.error(
-      "/api/books/:id",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function getBookByName(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/books/byName/:name",
       req.socket.remoteAddress,
       "Request receive(Get book by name)",
     );
+
     const bookName = req.params.name;
 
-    const book = await prisma.books.findFirst({
-      where: { Name: bookName },
-    });
+    const book = await Book.findOne({ Name: bookName });
 
     if (!book) {
-      logger.log(
-        "warn",
-        "/api/books/byName/:name",
-        req.socket.remoteAddress,
-        "Book not found",
-      );
       return res.status(404).json({
         status: "fail",
         message: "Book not found",
@@ -309,43 +208,27 @@ async function getBookByName(req, res) {
       },
     });
   } catch (error) {
-    logger.error(
-      "/api/books/byName/:name",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function getBookByPrice(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/books/byPrice/:price",
       req.socket.remoteAddress,
       "Request receive(Get book by price)",
     );
+
     const bookPrice = parseFloat(req.params.price);
 
-    // Query the database for the book with the specified name
-    const book = await prisma.books.findFirst({
-      where: { Price: bookPrice },
-    });
+    const book = await Book.findOne({ Price: bookPrice });
 
     if (!book) {
-      logger.log(
-        "warn",
-        "/api/books/byPrice/:price",
-        req.socket.remoteAddress,
-        "Book not found",
-      );
       return res.status(404).json({
         status: "fail",
         message: "Book not found",
@@ -359,43 +242,25 @@ async function getBookByPrice(req, res) {
       },
     });
   } catch (error) {
-    logger.error(
-      "/api/books/byPrice/:price",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function getAuthors(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/authors",
       req.socket.remoteAddress,
       "Request receive(Get authors)",
     );
-    const authors = await prisma.books.findMany({
-      distinct: ["Author"],
-      select: {
-        Author: true,
-      },
-    });
+
+    const authors = await Book.find().distinct("Author");
 
     if (!authors || authors.length === 0) {
-      logger.log(
-        "warn",
-        "/api/authors",
-        req.socket.remoteAddress,
-        "Authors not found",
-      );
       return res.status(404).json({
         status: "fail",
         message: "Authors not found",
@@ -409,48 +274,32 @@ async function getAuthors(req, res) {
       },
     });
   } catch (error) {
-    logger.error(
-      "/api/authors",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function getGenres(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/genres",
       req.socket.remoteAddress,
       "Request receive(Get genres)",
     );
-    const books = await prisma.books.findMany();
+
+    const books = await Book.find();
 
     if (!books || books.length === 0) {
-      logger.log(
-        "warn",
-        "/api/genres",
-        req.socket.remoteAddress,
-        "Book not found",
-      );
       return res.status(404).json({
         status: "fail",
         message: "Books not found",
       });
     }
 
-    const allGenres = books
-      .flatMap((book) => book.Genres.replace(/\[|\]|'/g, "").split(", "))
-      .filter(Boolean)
-      .filter((value, index, self) => self.indexOf(value) === index);
+    const allGenres = Array.from(new Set(books.flatMap((book) => book.Genres)));
 
     res.status(200).json({
       status: "success",
@@ -459,44 +308,29 @@ async function getGenres(req, res) {
       },
     });
   } catch (error) {
-    logger.error(
-      "/api/genres",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function getBooksByAuthor(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/authors/:name/books",
       req.socket.remoteAddress,
       "Request receive(Get books by one Author)",
     );
+
     const authorName = req.params.name;
 
-    const booksByAuthor = await prisma.books.findMany({
-      where: {
-        Author: authorName,
-      },
+    const booksByAuthor = await Book.find({
+      Author: authorName,
     });
 
     if (!booksByAuthor || booksByAuthor.length === 0) {
-      logger.log(
-        "warn",
-        "/api/authors/:name/books",
-        req.socket.remoteAddress,
-        `Books by the author ${authorName} not found`,
-      );
       return res.status(404).json({
         status: "fail",
         message: `Books by the author ${authorName} not found`,
@@ -510,48 +344,29 @@ async function getBooksByAuthor(req, res) {
       },
     });
   } catch (error) {
-    logger.error(
-      "/api/authors/:name/books",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function getBooksByGenre(req, res) {
   try {
-    logger.log(
-      "info",
+    logger.info(
       "/api/genres/:genre/books",
       req.socket.remoteAddress,
       "Request receive(Get all books by one genre)",
     );
-    // Extract the genre from the parameters
+
     const genre = req.params.genre;
 
-    // Query the database for books with the specified genre
-    const booksByGenre = await prisma.books.findMany({
-      where: {
-        Genres: {
-          contains: genre,
-        },
-      },
+    const booksByGenre = await Book.find({
+      Genres: { $regex: new RegExp(genre), $options: "i" },
     });
 
     if (!booksByGenre || booksByGenre.length === 0) {
-      logger.log(
-        "warn",
-        "/api/genres/:genre/books",
-        req.socket.remoteAddress,
-        "Books with genre not found",
-      );
       return res.status(404).json({
         status: "fail",
         message: `Books with the specified genre not found`,
@@ -565,20 +380,14 @@ async function getBooksByGenre(req, res) {
       },
     });
   } catch (error) {
-    logger.error(
-      "/api/genres/:genre/books",
-      req.socket.remoteAddress,
-      `Error: ${error.message}`,
-    );
     console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
+
 module.exports = {
   getAllBooks,
   uploadBook,

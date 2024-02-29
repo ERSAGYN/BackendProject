@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Password recovery</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+  />
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background-image: url("https://fonoteka.top/uploads/posts/2022-01/1642694225_19-phonoteka-org-p-temnii-fon-dlya-saita-19.jpg");
+          background-repeat: repeat;
+          background-size: cover;
+          background-position: center;
+      }
+      .container {
+          width: 60dvh;
+          padding: 20px;
+          background-color: #333;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      form {
+          margin-bottom: 20px;
+      }
+      .input-container {
+          margin-bottom: 10px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+
+      input {
+          flex: 1;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+      }
+      button[type="submit"] {
+          background-color: #007bff;
+          color: #fff;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 4px;
+          margin-left: 10px;
+      }
+  </style>
+</head>
+<body>
+<div class="container">
+  <form action="/register" method="post">
+    <h2 style="color: #ccc; text-align: center">Password recovery</h2>
+    <div class="input-container">
+      <input
+        type="tel"
+        id="phone"
+        name="phone"
+        placeholder="Phone number"
+        required
+      />
+      <button type="submit">Send me a code</button>
+    </div>
+  </form>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+<script>
+  var input = document.querySelector("#phone");
+  window.intlTelInput(input, {
+    initialCountry: "kz",
+    separateDialCode: true,
+    formatOnInit: true,
+  });
+</script>
+</body>
+</html>

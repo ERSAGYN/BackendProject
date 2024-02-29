@@ -3,11 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Registration</title>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
-  />
+  <title>Вход</title>
   <style>
       body {
           font-family: Arial, sans-serif;
@@ -19,8 +15,7 @@
           height: 100vh;
           background-image: url("https://fonoteka.top/uploads/posts/2022-01/1642694225_19-phonoteka-org-p-temnii-fon-dlya-saita-19.jpg");
           background-repeat: repeat;
-          background-size: cover;
-          background-position: center;
+          background-color: #505050;
       }
       .container {
           width: 300px;
@@ -32,13 +27,11 @@
       form {
           margin-bottom: 20px;
       }
-      .input-container {
-          margin-bottom: 10px;
-          text-align: center;
-      }
-      input,
+      input[type="email"],
+      input[type="password"],
       button {
           width: 100%;
+          margin-bottom: 10px;
           padding: 10px;
           border: 1px solid #ccc;
           border-radius: 4px;
@@ -82,6 +75,7 @@
           background-color: #007bff;
           color: #fff;
       }
+
       button[type="submit"]:hover {
           background-color: #0056b3;
       }
@@ -89,8 +83,8 @@
 </head>
 <body>
 <div class="container">
-  <form action="/register" method="post">
-    <h2 style="color: #ccc; text-align: center">Registration</h2>
+  <form action="/api/login" method="post">
+    <h2 style="color: #ccc; text-align: center">Sign in</h2>
     <button class="btn-github" type="button">
       <img
         src="https://avatars.mds.yandex.net/i?id=25263504eb2025f4548ba4ac07fb987af35a614c-12491243-images-thumbs&n=13"
@@ -99,49 +93,20 @@
       via GitHub
     </button>
     <hr />
-    <div class="input-container">
-      <input
-        type="username"
-        name="username"
-        placeholder="Username"
-        required
-      />
-    </div>
-    <div class="input-container">
-      <input type="email" name="email" placeholder="Email" required />
-    </div>
-    <div class="input-container">
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        required
-      />
-    </div>
-    <div class="input-container">
-      <input
-        type="tel"
-        id="phone"
-        name="phone"
-        placeholder="Phone number"
-        required
-      />
-    </div>
-    <button type="submit">Register</button>
+    <input type="email" name="email" placeholder="Email" required />
+    <input
+      type="password"
+      name="password"
+      placeholder="Password"
+      required
+    />
+    <button type="submit">Signing in</button>
   </form>
   <div class="text-links">
-    <a href="#">Sign up</a>
+    <a href="#">Sign in</a>
+    <span>|</span>
+    <a href="#">Forgot email or password?</a>
   </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
-<script>
-  var input = document.querySelector("#phone");
-  window.intlTelInput(input, {
-    initialCountry: "kz",
-    separateDialCode: true,
-    formatOnInit: true,
-  });
-</script>
 </body>
 </html>

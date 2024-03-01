@@ -4,9 +4,15 @@ const axios = require("axios");
 const qs = require("querystring");
 const User = require("../models/user");
 const RecoveryCode = require("../models/recoveryCode");
+const logger = require("../utils/logger");
 
 async function register(req, res) {
   try {
+    logger.info(
+      "/api/register",
+      req.socket.remoteAddress,
+      "Request receive(Register user)",
+    );
     const { username, email, password, phone } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,6 +36,11 @@ async function register(req, res) {
 
 async function login(req, res) {
   try {
+    logger.info(
+      "/api/login",
+      req.socket.remoteAddress,
+      "Request receive(Log in user)",
+    );
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -47,9 +58,9 @@ async function login(req, res) {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-
-    req.session.token = token;
-    console.log("Tokenses:", req.session.token);
+    res.cookie("token", token, { httpOnly: true, secure: true });
+    //req.session.token = token;
+    console.log("Tokenses:", req.cookies.token);
     console.log("Tokenlog:", token);
 
     res.status(200).json({ message: "Login successful", token });
@@ -58,13 +69,17 @@ async function login(req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
-
 async function passwordRecovery(req, res) {
   try {
+    logger.info(
+      "/api/passwordRecovery",
+      req.socket.remoteAddress,
+      "Request receive(Sending recovery code)",
+    );
     const { userVkId } = req.body;
 
     const recoveryCode = Math.floor(1000 + Math.random() * 9000);
-    const userId = getUserIdFromToken(req.session.token);
+    const userId = getUserIdFromToken(req.cookies.token);
     await RecoveryCode.create({
       userId,
       recoveryCode,
@@ -97,8 +112,13 @@ async function passwordRecovery(req, res) {
 
 async function updatePassword(req, res) {
   try {
+    logger.info(
+      "/api/updatePassword",
+      req.socket.remoteAddress,
+      "Request receive(Update user password)",
+    );
     const { oldPassword, newPassword, code } = req.body;
-    const userId = getUserIdFromToken(req.session.token);
+    const userId = getUserIdFromToken(req.cookies.token);
 
     const recoveryCode = await RecoveryCode.findOne({
       userId: userId,
@@ -138,6 +158,51 @@ async function updatePassword(req, res) {
     console.error("Error updating password:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+}
+
+async function loginByGithubPage(req, res) {
+  logger.info(
+    "/api/loginByGithub",
+    req.socket.remoteAddress,
+    "Request receive(Show logged page)",
+  );
+  res.render("successfull");
+}
+
+async function registerPage(req, res) {
+  logger.info(
+    "/api/register",
+    req.socket.remoteAddress,
+    "Request receive(Show registration page)",
+  );
+  res.render("registration");
+}
+
+async function loginPage(req, res) {
+  logger.info(
+    "/api/login",
+    req.socket.remoteAddress,
+    "Request receive(Show login)",
+  );
+  res.render("login");
+}
+
+async function recoveryPage(req, res) {
+  logger.info(
+    "/api/recovery",
+    req.socket.remoteAddress,
+    "Request receive(Show recovery page)",
+  );
+  res.render("recovery");
+}
+
+async function confirmRecoveryCodePage(req, res) {
+  logger.info(
+    "/api/confirmRecoveryCode",
+    req.socket.remoteAddress,
+    "Request receive(Show password recovery page)",
+  );
+  res.render("confirmRecovery");
 }
 
 // async function getUserIdByPhoneNumber(phone) {
@@ -185,4 +250,9 @@ module.exports = {
   getUserIdFromToken,
   passwordRecovery,
   updatePassword,
+  loginByGithubPage,
+  registerPage,
+  loginPage,
+  recoveryPage,
+  confirmRecoveryCodePage,
 };

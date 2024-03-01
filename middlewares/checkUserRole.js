@@ -3,7 +3,8 @@ const User = require("../models/user");
 
 const checkUserRole = (allowedRoles) => {
   return async (req, res, next) => {
-    const token = req.session.token;
+    //const token = req.session.token;
+    const token = req.cookies.token;
 
     if (!token) {
       return res

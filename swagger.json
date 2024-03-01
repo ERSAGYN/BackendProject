@@ -127,7 +127,7 @@
           },
           {
             "name": "id",
-            "in": "path",
+            "in": "body",
             "description": "book that we want to update",
             "schema": {
               "$ref": "#/definitions/book"
@@ -217,9 +217,118 @@
           }
         }
       }
+    },
+    "/api/register": {
+      "get": {
+        "summary": "Register account",
+        "parameters": [
+          {
+            "name": "register",
+            "in": "path",
+            "description": "",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "register"
+        ],
+        "description": "registration new account",
+        "parameters": [
+          {
+            "name": "register",
+            "in": "body",
+            "description": "registration new account",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          }
+        ],
+        "produces": [
+          "application/json/ejs"
+        ],
+        "responses": {
+          "200": {
+            "description": "New book is created",
+            "schema": {
+              "$ref": "#/definitions/book"
+            }
+          },
+          "409": {
+            "description": "Database error"
+          }
+        }
+      }
+    },
+    "/api/login": {
+      "get": {
+        "summary": "Login to account",
+        "parameters": [
+          {
+            "name": "e-mail",
+            "in": "path",
+            "description": "e-mail of user",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "login"
+        ],
+        "description": "login to account ",
+        "parameters": [
+          {
+            "name": "e-mail",
+            "in": "login",
+            "description": "account that we want to log in"
+          }
+        ],
+        "produces": [
+          "application/json/ejs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Log in successfully to the account",
+            "schema": {
+            }
+          },
+          "409": {
+            "description": "Database error"
+          }
+        }
+      }
+
     }
   },
   "definitions": {
+    "user": {
+      "required": ["e-mail"],
+      "properties": {
+        "id": {
+         "type": "string",
+          "uniqueItems": true
+        }
+      }
+    },
+
     "book": {
       "required": ["name"],
       "properties": {

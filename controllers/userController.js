@@ -76,10 +76,14 @@ async function passwordRecovery(req, res) {
       req.socket.remoteAddress,
       "Request receive(Sending recovery code)",
     );
-    const { userVkId } = req.body;
-
+    const { email: email, userVkId: userVkId } = req.body;
+    console.log(email);
     const recoveryCode = Math.floor(1000 + Math.random() * 9000);
-    const userId = getUserIdFromToken(req.cookies.token);
+    const user = await User.findOne({ email: email });
+    console.log(user);
+    const userId = user._id;
+    console.log(userId);
+
     await RecoveryCode.create({
       userId,
       recoveryCode,
@@ -103,6 +107,8 @@ async function passwordRecovery(req, res) {
       console.error("VK API error:", vkApiResponse.data.error);
       return res.status(500).json({ error: "Error sending recovery code" });
     }
+    res.cookie("userId", userId, { httpOnly: true, secure: true });
+
     res.redirect("/api/confirmRecoveryCode");
   } catch (error) {
     console.error("Error during password recovery:", error);
@@ -118,7 +124,7 @@ async function updatePassword(req, res) {
       "Request receive(Update user password)",
     );
     const { oldPassword, newPassword, code } = req.body;
-    const userId = getUserIdFromToken(req.cookies.token);
+    const userId = req.cookies.userId;
 
     const recoveryCode = await RecoveryCode.findOne({
       userId: userId,
@@ -235,7 +241,7 @@ function getUserIdFromToken(token) {
   try {
     const decodedToken = jwt.verify(
       token,
-      "T#h&iSis@S3cUreJWTS3cr3tK3y!FoR#YoUrA2PPL1C4T!oN",
+      "T#h&iSis@S3cUreJWTS3cr3tK3y!FoR#YoUrA2PPL1C4T!oN2",
     );
     return decodedToken.userId;
   } catch (error) {
